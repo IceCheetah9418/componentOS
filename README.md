@@ -2,8 +2,8 @@
 
 Encountered a weird bug on your microcontroller?, or want to suggest a new feature or LLM provider? 
 
-* **Found a Bug?** Open an issue with your board target (`esp32`, `rp2040`, etc.), the peripheral model, and the exact serial traceback output.
-* **Want a Feature?** Drop a feature request detailing your use case (e.g., adding OTA Wi-Fi flashing, new bus arbitration rules, or GUI integrations).
+* **Found a Bug?** Open an issue with your board (`esp32`, `rp2040`, etc.), the peripheral model and some basic info, and the exact serial traceback output.
+* **Want a Feature?** Drop a feature request detailing your use case (e.g., adding OTA Wi-Fi flashing, new bus arbitration rules, or GUI integrations etc... (btw im working on all those and more in the next update!)).
 
 Head over to the [ComponentOS Issues Page](https://github.com/IceCheetah9418/componentOS/issues) to log it!
 

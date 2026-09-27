@@ -18,14 +18,20 @@ class OllamaProvider(BaseLLMProvider):
         return response.json().get("response", "")
 
 class OpenRouterOrOpenAIProvider(BaseLLMProvider):
-    def __init__(self):
+    def __init__(self, role: str = "coder"):
         self.api_key = os.getenv("LLM_API_KEY")
         if not self.api_key:
             raise ValueError("LLM_API_KEY environment variable not set")
         self.base_url = os.getenv("LLM_BASE_URL", "https://openrouter.ai/api/v1")
-        self.model = os.getenv("LLM_MODEL")
+        
+        # Support separate models for planner vs coder roles
+        if role == "planner":
+            self.model = os.getenv("PLANNER_MODEL", os.getenv("LLM_MODEL"))
+        else:
+            self.model = os.getenv("LLM_MODEL")
+            
         if not self.model:
-            raise ValueError("LLM_MODEL environment variable not set")
+            raise ValueError("LLM model environment variable not set")
 
     def generate(self, prompt: str, system_prompt: str = "") -> str:
         headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
@@ -46,11 +52,11 @@ class OpenRouterOrOpenAIProvider(BaseLLMProvider):
             
         return data["choices"][0]["message"]["content"]
 
-def get_llm_provider() -> BaseLLMProvider:
+def get_llm_provider(role: str = "coder") -> BaseLLMProvider:
     provider_type = os.getenv("LLM_PROVIDER", "ollama").lower()
     if provider_type == "ollama":
         return OllamaProvider()
     elif provider_type in ["openrouter", "openai", "custom"]:
-        return OpenRouterOrOpenAIProvider()
+        return OpenRouterOrOpenAIProvider(role=role)
     else:
         raise ValueError(f"Unknown LLM provider: {provider_type}")

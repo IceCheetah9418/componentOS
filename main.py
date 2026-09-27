@@ -1,26 +1,25 @@
-from dotenv import load_dotenv
-load_dotenv()
-
-import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from core.engine import ComponentOSEngine
+from dotenv import load_dotenv
+from core.engine import DriverSynthesisEngine
 
-app = FastAPI(title="ComponentOS API")
-engine = ComponentOSEngine()
+load_dotenv()
 
-class DriverRequest(BaseModel):
+app = FastAPI(title="ComponentOS Driver Synthesis Engine")
+engine = DriverSynthesisEngine()
+
+class SynthesisRequest(BaseModel):
     peripheral: str
     pinout: str
 
 @app.post("/synthesize")
-def synthesize(request: DriverRequest):
+def synthesize_driver(req: SynthesisRequest):
     try:
-        code = engine.synthesize_driver(request.peripheral, request.pinout)
-        return {"code": code}
+        result = engine.synthesize(peripheral=req.peripheral, pinout=req.pinout)
+        return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/health")
-def health():
-    return {"status": "healthy"}
+def health_check():
+    return {"status": "online", "system": "ComponentOS Dual-LLM Pipeline Active"}

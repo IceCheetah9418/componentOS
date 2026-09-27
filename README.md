@@ -4,22 +4,32 @@ Super ULTRA dual-llm setup that auto-synthesizes, validates, and flashes custom 
 
 ---
 
-## 🧐 What is ComponentOS?
+## What is ComponentOS? (maybe)
 
 ComponentOS is an autonomous microcode synthesis engine designed to bridge the gap between human peripheral intent and physical embedded hardware. Instead of spending hours hunting down half-baked GitHub drivers or reading 80-page datasheets for I2C register maps, ComponentOS generates hardware-accurate, security-audited MicroPython drivers on demand and pushes them directly onto your microcontrollers.
 
 ---
 
-## 🛠️ How It Works (The Engine Pipeline)
+## Fully Modular LLM Backend (OpenRouter, Ollama, & MORE)
 
-ComponentOS uses a decoupled pipeline to make sure synthesized code isn't just valid Python, but actual functional firmware that won't crash your microcontroller or hang your bus:
+You aren't locked into any one LLM provider. ComponentOS features a fully decoupled provider architecture (`llm/providers.py`) that lets you swap your backend depending on whether you want SpeedY APIs or 100% private local execution:
+
+* **OpenRouter:** Default setup for blazing-fast cloud models (like Nemotron for planning and Cohere for coding).
+* **Ollama:** Full support for running local models right on your local rig or home server (e.g., Llama 3, Mistral, CodeGemma) without sending code or data to external servers.
+* **Custom Endpoints:** Easily plug in any OpenAI-compatible API backend.
+
+---
+
+##  How It Works (The pipe)
+
+ComponentOS uses a decoupled pipeline to make sure synthesized code isn't just valid Python, but actual functional firmware that won't crash your microcontroller or kill your dog:
 
 1. **Architectural Planning Phase (Planner LLM):**
-   * Uses `nvidia/nemotron-3-ultra-550b-a55b` to act as an embedded hardware architect.
+   * Acts as an embedded hardware architect. 
    * Scans datasheets and pinouts to output precise technical specifications: I2C/SPI clock speeds, rise-time constraints, register initialization sequences, power-on delays, and burst-read byte offsets.
 
 2. **Firmware Synthesis Phase (Coder LLM):**
-   * Uses `cohere/north-mini-code` to take the spec from the Planner and convert it into a lean, production-ready MicroPython class.
+   * Takes the spec from the Planner and converts it into a lean, production-ready MicroPython class.
    * Generates low-level write/read register helpers, unit conversions (like converting raw LSB to $g$ force or °/s), and automatic hardware bias calibration routines.
 
 3. **Iron Gate Security Audit (AST Validator):**
@@ -41,15 +51,22 @@ git clone [https://github.com/IceCheetah9418/componentOS.git](https://github.com
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```
-Drop a .env file in the root directory:
+Drop a .env file in the root directory. You can configure it for OpenRouter (cloud) or Ollama (local):
 
-Code snippet
+# Example for OpenRouter Cloud Provider
 ```
 LLM_PROVIDER=openrouter
-LLM_API_KEY=your_key_here
+LLM_API_KEY=your_openrouter_key_here
 LLM_BASE_URL=[https://openrouter.ai/api/v1](https://openrouter.ai/api/v1)
 LLM_MODEL=cohere/north-mini-code:free
 PLANNER_MODEL=nvidia/nemotron-3-ultra-550b-a55b:free
+```
+# OR Example for Local Ollama Provider
+```
+LLM_PROVIDER=ollama
+LLM_BASE_URL=http://localhost:11434
+LLM_MODEL=codellama
+PLANNER_MODEL=llama3
 ```
 Fire up the backend server:
 
@@ -83,5 +100,5 @@ curl -X 'POST' '[http://127.0.0.1:8000/synthesize](http://127.0.0.1:8000/synthes
     "port": "/dev/ttyACM0"
   }'
 ```
-📌 Note
-Note: This is a solo project built and maintained by one person! New features, UI dashboards, and updates are being actively cooked up, but they might take a little while. Appreciate the patience, BRUH!
+ Note
+Note: This is a solo project built and maintained by one person! New features, UI dashboards, and updates are being actively cooked up, but they might take a little while. Appreciate the free code untill then bruv!

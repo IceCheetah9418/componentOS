@@ -73,8 +73,8 @@ Fire up the backend server:
 ```
 uvicorn main:app --reload
 ```
-Test It Out (some examples)
-<small> You can send a POST request to http://127.0.0.1:8000/synthesize using curl or any API client. </small>
+Test It Out (some examples):
+(NOTE: You can send a POST request to http://127.0.0.1:8000/synthesize using curl or any API client.) 
 
 Example 1: MPU6050 Accelerometer on ESP32
 ```

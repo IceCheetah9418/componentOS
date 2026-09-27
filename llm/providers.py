@@ -13,7 +13,8 @@ class OllamaProvider(BaseLLMProvider):
         full_prompt = f"{system_prompt}\n\n{prompt}" if system_prompt else prompt
         response = requests.post(
             f"{self.host}/api/generate",
-            json={"model": self.model, "prompt": full_prompt, "stream": False}
+            json={"model": self.model, "prompt": full_prompt, "stream": False},
+            timeout=60
         )
         return response.json().get("response", "")
 
@@ -24,7 +25,7 @@ class OpenRouterOrOpenAIProvider(BaseLLMProvider):
             raise ValueError("LLM_API_KEY environment variable not set")
         self.base_url = os.getenv("LLM_BASE_URL", "https://openrouter.ai/api/v1")
         
-        # Support separate models for planner vs coder roles
+        # Route models based on role
         if role == "planner":
             self.model = os.getenv("PLANNER_MODEL", os.getenv("LLM_MODEL"))
         else:
@@ -34,7 +35,10 @@ class OpenRouterOrOpenAIProvider(BaseLLMProvider):
             raise ValueError("LLM model environment variable not set")
 
     def generate(self, prompt: str, system_prompt: str = "") -> str:
-        headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
@@ -43,7 +47,8 @@ class OpenRouterOrOpenAIProvider(BaseLLMProvider):
         response = requests.post(
             f"{self.base_url}/chat/completions",
             headers=headers,
-            json={"model": self.model, "messages": messages}
+            json={"model": self.model, "messages": messages},
+            timeout=60
         )
         
         data = response.json()

@@ -7,24 +7,24 @@ class DriverSynthesisEngine:
         self.coder = get_llm_provider(role="coder")
 
     def synthesize(self, peripheral: str, pinout: str) -> dict:
-        # Step 1: Planner Agent designs the hardware approach & pin mapping strategy
+        # Step 1: Generate architectural hardware specification
         planning_prompt = f"""
         Analyze the following hardware peripheral and pinout requirement for an ESP32 microcode target:
         Peripheral: {peripheral}
         Pinout: {pinout}
         
-        Provide a concise technical specification detailing the protocol (e.g., I2C, SPI, GPIO, One-Wire), 
-        timing constraints, initialization sequence, and safety considerations.
+        Provide a concise technical specification detailing the protocol, timing constraints, 
+        register initialization sequence, and hardware considerations.
         """
         plan = self.planner.generate(
             prompt=planning_prompt, 
-            system_prompt="You are an embedded systems hardware architect."
+            system_prompt="You are an expert embedded systems hardware architect."
         )
 
-        # Step 2: Coder Agent writes the strict MicroPython driver based on the plan
+        # Step 2: Synthesize clean MicroPython driver code based on plan
         coding_prompt = f"""
         Using the following architectural plan, write a clean, production-ready MicroPython class for the ESP32.
-        Return ONLY valid Python code without markdown text blocks if possible, or standard clean code.
+        Return ONLY valid Python code without markdown text blocks if possible.
         
         Architectural Plan:
         {plan}
@@ -34,10 +34,10 @@ class DriverSynthesisEngine:
             system_prompt="You are a strict MicroPython firmware engineer writing clean, robust driver classes."
         )
 
-        # Clean markdown code blocks if the LLM wrapped them
+        # Clean markdown code wrappers if present
         clean_code = raw_code.replace("```python", "").replace("```", "").strip()
 
-        # Step 3: Run through the Iron Gate AST Validator for safety
+        # Step 3: Run through Iron Gate security validator
         is_valid, error_msg = validate_code(clean_code)
         if not is_valid:
             raise ValueError(f"Iron Gate Validation Failed: {error_msg}")

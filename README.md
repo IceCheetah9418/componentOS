@@ -1,4 +1,4 @@
-# ComponentOS 🔌🤖
+# ComponentOS
 
 Super ULTRA dual-llm setup that auto-synthesizes, validates, and flashes custom Micro-Python drivers straight to your microcontrollers. Planner + Coder figures out the specs and writes the code, Iron Gate AST checker keeps it safe, and `mpremote` pushes it right to the metal (optional and its for flashing). No more writing tedious boilerplate sensor code from scratch, BRUH.
 

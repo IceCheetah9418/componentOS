@@ -1,4 +1,4 @@
-## 🐛 Bug Reports & Feature Requests
+##  Bug Reports & Feature Requests
 
 Encountered a weird bug on your microcontroller?, or want to suggest a new feature or LLM provider? 
 

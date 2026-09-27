@@ -1,6 +1,6 @@
-# ComponentOS
+# ComponentOS:
 
-Super ULTRA dual-llm setup that auto-synthesizes, validates, and flashes custom Micro-Python drivers straight to your microcontrollers. Planner + Coder figures out the specs and writes the code, Iron Gate AST checker keeps it safe, and `mpremote` pushes it right to the metal (optional and its for flashing). No more writing tedious boilerplate sensor code from scratch, BRUH.
+Super ULTRA dual-llm setup that auto-synthesizes, validates, and flashes custom Micro-Python drivers straight to your microcontrollers. Planner and Coder LLMs figure out the specs and write the code respectively, Iron Gate AST checker keeps it safe, and `mpremote` pushes it right to the metal (optional and its for flashing). No more writing tedious boilerplate sensor code from scratch, BRUV.
 
 ---
 
@@ -14,7 +14,7 @@ ComponentOS is an autonomous microcode synthesis engine designed to bridge the g
 
 You aren't locked into any one LLM provider. ComponentOS features a fully decoupled provider architecture (`llm/providers.py`) that lets you swap your backend depending on whether you want SpeedY APIs or 100% private local execution:
 
-* **OpenRouter:** Default setup for blazing-fast cloud models (like Nemotron for planning and Cohere for coding).
+* **OpenRouter:** Default setup for cloud AND fast cloud models (like Nemotron for planning and Cohere for coding in my first test).
 * **Ollama:** Full support for running local models right on your local rig or home server (e.g., Llama 3, Mistral, CodeGemma) without sending code or data to external servers.
 * **Custom Endpoints:** Easily plug in any OpenAI-compatible API backend.
 
@@ -26,19 +26,19 @@ ComponentOS uses a decoupled pipeline to make sure synthesized code isn't just v
 
 1. **Architectural Planning Phase (Planner LLM):**
    * Acts as an embedded hardware architect. 
-   * Scans datasheets and pinouts to output precise technical specifications: I2C/SPI clock speeds, rise-time constraints, register initialization sequences, power-on delays, and burst-read byte offsets.
+   * Scans datasheets and pinouts to output precise technical specifications (for reference of the coder LLM) : I2C/SPI clock speeds, rise-time constraints, register initialization sequences, power-on delays, and burst-read byte offsets.
 
 2. **Firmware Synthesis Phase (Coder LLM):**
    * Takes the spec from the Planner and converts it into a lean, production-ready MicroPython class.
-   * Generates low-level write/read register helpers, unit conversions (like converting raw LSB to $g$ force or °/s), and automatic hardware bias calibration routines.
+   * Generates low-level write/read register helpers, unit conversions (like converting raw LSB to $g$ force or °/s), and automatic hardware bias calibration routines (basically drivers).
 
 3. **Iron Gate Security Audit (AST Validator):**
-   * Parses the generated code using Python's Abstract Syntax Tree (`ast`).
-   * Enforces strict execution safety by blocking dangerous built-ins (`eval`, `exec`, `open`, `__import__`) and ensuring only approved hardware modules (`machine`, `time`, `math`, `struct`) are imported.
+   * Parses the generated code using Python's Abstract Syntax Tree to make sure it wont blow your microcontroller up (`ast`).
+   * Enforces strict execution safety by blocking dangerous built-ins (`eval`, `exec`, `open`, `__import__`) and ensuring only approved hardware modules (`machine`, `time`, `math`, `struct`) are imported so nothing blows up.
 
-4. **Universal Metal Deployment (`mpremote`):**
+4. **Universal Deployment (`mpremote`):**
    * Integrates MicroPython's native CLI tool (`mpremote`) directly into the backend.
-   * Stages the validated driver and flashes it over serial/USB directly onto the board's filesystem (`:driver.py`) across any target architecture (ESP32, Raspberry Pi Pico RP2040, STM32, ESP8266).
+   * Stages the validated driver and flashes it over serial/USB directly onto the board's filesystem (`:driver.py`) across any supported target architecture (ESP32, Raspberry Pi Pico RP2040, STM32, ESP8266).
 
 ---
 
@@ -73,8 +73,8 @@ Fire up the backend server:
 ```
 uvicorn main:app --reload
 ```
-🧪 Test It Out (Random Examples)
-You can send a POST request to http://127.0.0.1:8000/synthesize using curl or any API client.
+Test It Out (some examples)
+# You can send a POST request to http://127.0.0.1:8000/synthesize using curl or any API client.
 
 Example 1: MPU6050 Accelerometer on ESP32
 ```

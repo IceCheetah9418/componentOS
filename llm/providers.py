@@ -39,7 +39,12 @@ class OpenRouterOrOpenAIProvider(BaseLLMProvider):
             headers=headers,
             json={"model": self.model, "messages": messages}
         )
-        return response.json()["choices"][0]["message"]["content"]
+        
+        data = response.json()
+        if response.status_code != 200 or "choices" not in data:
+            raise ValueError(f"OpenRouter Error ({response.status_code}): {data}")
+            
+        return data["choices"][0]["message"]["content"]
 
 def get_llm_provider() -> BaseLLMProvider:
     provider_type = os.getenv("LLM_PROVIDER", "ollama").lower()

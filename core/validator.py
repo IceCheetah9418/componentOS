@@ -2,7 +2,10 @@ import ast
 
 class SecurityValidator(ast.NodeVisitor):
     def __init__(self):
-        self.allowed_modules = {"machine", "time", "utime", "network", "esp32", "math", "dht", "struct", "ustruct", "micropython"}
+        self.allowed_modules = {
+            "machine", "time", "utime", "network", 
+            "esp32", "math", "dht", "struct", "ustruct", "micropython"
+        }
         self.forbidden_builtins = {"eval", "exec", "compile", "__import__", "open"}
         self.errors = []
 

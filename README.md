@@ -1,3 +1,13 @@
+## 🐛 Bug Reports & Feature Requests
+
+Encountered a weird bug on your microcontroller?, or want to suggest a new feature or LLM provider? 
+
+* **Found a Bug?** Open an issue with your board target (`esp32`, `rp2040`, etc.), the peripheral model, and the exact serial traceback output.
+* **Want a Feature?** Drop a feature request detailing your use case (e.g., adding OTA Wi-Fi flashing, new bus arbitration rules, or GUI integrations).
+
+Head over to the [ComponentOS Issues Page](https://github.com/IceCheetah9418/componentOS/issues) to log it!
+
+
 # ComponentOS:
 
 Super ULTRA dual-llm setup that auto-synthesizes, validates, and flashes custom Micro-Python drivers straight to your microcontrollers. Planner and Coder LLMs figure out the specs and write the code respectively, Iron Gate AST checker keeps it safe, and `mpremote` pushes it right to the metal (optional and its for flashing). No more writing tedious boilerplate sensor code from scratch, BRUV.

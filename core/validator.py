@@ -29,15 +29,22 @@ class SecurityValidator(ast.NodeVisitor):
                 self.errors.append(f"Forbidden function call detected: {node.func.id}()")
         self.generic_visit(node)
 
-def validate_code(code_string: str) -> tuple[bool, list[str]]:
+def validate_code(code_string: str) -> tuple[bool, str]:
+    """Validate generated code for syntax and security issues.
+    
+    Returns:
+        tuple[bool, str]: (is_valid, error_message)
+            - is_valid: True if code passes all checks
+            - error_message: Empty string if valid, concatenated error list if invalid
+    """
     try:
         tree = ast.parse(code_string)
     except SyntaxError as e:
-        return False, [f"Python Syntax Error: {e}"]
+        return False, f"Python Syntax Error: {e}"
     
     validator = SecurityValidator()
     validator.visit(tree)
     
     if validator.errors:
-        return False, validator.errors
-    return True, []
+        return False, " | ".join(validator.errors)
+    return True, ""

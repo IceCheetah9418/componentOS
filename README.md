@@ -57,7 +57,7 @@ ComponentOS uses a decoupled pipeline to make sure synthesized code isn't just v
 Clone the repository and set up your Python virtual environment:
 
 ```
-git clone [https://github.com/IceCheetah9418/componentOS.git](https://github.com/IceCheetah9418/componentOS.git) && cd componentOS
+git clone https://github.com/IceCheetah9418/componentOS.git && cd componentOS
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```

@@ -67,7 +67,7 @@ Drop a .env file in the root directory. You can configure it for OpenRouter (clo
 ```
 LLM_PROVIDER=openrouter
 LLM_API_KEY=your_openrouter_key_here
-LLM_BASE_URL=[https://openrouter.ai/api/v1](https://openrouter.ai/api/v1)
+LLM_BASE_URL=https://openrouter.ai/api/v1
 LLM_MODEL=cohere/north-mini-code:free
 PLANNER_MODEL=nvidia/nemotron-3-ultra-550b-a55b:free
 ```
@@ -89,7 +89,7 @@ Test It Out (some examples):
 
 Example 1: MPU6050 Accelerometer on ESP32
 ```
-curl -X 'POST' '[http://127.0.0.1:8000/synthesize](http://127.0.0.1:8000/synthesize)' \
+curl -X 'POST' 'http://127.0.0.1:8000/synthesize' \
   -H 'Content-Type: application/json' \
   -d '{
     "peripheral": "MPU6050 6-axis accelerometer and gyroscope",
@@ -101,7 +101,7 @@ curl -X 'POST' '[http://127.0.0.1:8000/synthesize](http://127.0.0.1:8000/synthes
 ```
 Example 2: DHT22 Sensor on PI Pico
 ```
-curl -X 'POST' '[http://127.0.0.1:8000/synthesize](http://127.0.0.1:8000/synthesize)' \
+curl -X 'POST' 'http://127.0.0.1:8000/synthesize' \
   -H 'Content-Type: application/json' \
   -d '{
     "peripheral": "DHT22 temperature and humidity sensor",

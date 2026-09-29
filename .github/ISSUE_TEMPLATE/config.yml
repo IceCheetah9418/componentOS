@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage questions and setup help
+    url: https://github.com/IceCheetah9418/componentOS/discussions
+    about: Ask questions and get help from the community.
+  - name: Security vulnerability
+    url: https://github.com/IceCheetah9418/componentOS/security/advisories/new
+    about: Report security issues privately; do not post them publicly.

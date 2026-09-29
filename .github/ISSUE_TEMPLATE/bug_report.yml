@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a reproducible problem with ComponentOS.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve ComponentOS. Do not include API keys, tokens, or private device data.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the expected behavior and what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include the smallest request or code sample that reproduces the problem.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: board
+    attributes:
+      label: Board and MicroPython version
+      placeholder: ESP32, MicroPython 1.24.1
+  - type: input
+    id: peripheral
+    attributes:
+      label: Peripheral and wiring
+      placeholder: MPU6050, SDA GPIO21, SCL GPIO22
+  - type: input
+    id: environment
+    attributes:
+      label: OS and Python version
+      placeholder: Ubuntu 24.04, Python 3.12
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or traceback
+      description: Paste the complete relevant output. Remove secrets first.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I removed secrets and private information from this report.
+          required: true

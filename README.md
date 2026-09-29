@@ -1,115 +1,146 @@
-##  Bug Reports & Feature Requests
+# ComponentOS
 
-Encountered a weird bug on your microcontroller?, or want to suggest a new feature or LLM provider? 
+> Dynamic MicroPython driver synthesis and deployment for embedded hardware.
 
-* **Found a Bug?** Open an issue with your board (`esp32`, `rp2040`, etc.), the peripheral model and some basic info, and the exact serial traceback output.
-* **Want a Feature?** Drop a feature request detailing your use case (e.g., adding OTA Wi-Fi flashing, new bus arbitration rules, or GUI integrations etc... (btw im working on all those and more in the next update!)).
+ComponentOS turns a hardware request into a validated MicroPython driver. A planner model creates an implementation plan, a coder model generates the driver, an AST-based safety gate checks it, and the optional deployment step sends it to a connected board.
 
-Head over to the [ComponentOS Issues Page](https://github.com/IceCheetah9418/componentOS/issues) to log it!
+> **Project status:** Early-stage and experimental. Generated firmware must be reviewed and tested on non-critical hardware before production use.
 
+## Highlights
 
-# ComponentOS:
+- **Hardware-aware synthesis** for peripherals, buses, pins, and target boards.
+- **Provider flexibility** through OpenRouter, Ollama, and OpenAI-compatible endpoints.
+- **Two-stage generation** separating hardware planning from code generation.
+- **Safety validation** before generated code is accepted for deployment.
+- **MicroPython deployment** through `mpremote` over USB or serial.
+- **Python API service** exposed through FastAPI/Uvicorn.
 
-Super ULTRA dual-llm setup that auto-synthesizes, validates, and flashes custom Micro-Python drivers straight to your microcontrollers. Planner and Coder LLMs figure out the specs and write the code respectively, Iron Gate AST checker keeps it safe, and `mpremote` pushes it right to the metal (optional and its for flashing). No more writing tedious boilerplate sensor code from scratch, BRUV.
+## How it works
 
----
-
-## What is ComponentOS? (maybe)
-
-ComponentOS is an autonomous microcode synthesis engine designed to bridge the gap between human peripheral intent and physical embedded hardware. Instead of spending hours hunting down half-baked GitHub drivers or reading 80-page datasheets for I2C register maps, ComponentOS generates hardware-accurate, security-audited MicroPython drivers on demand and pushes them directly onto your microcontrollers.
-
----
-
-## Fully Modular LLM Backend (OpenRouter, Ollama, & MORE)
-
-You aren't locked into any one LLM provider. ComponentOS features a fully decoupled provider architecture (`llm/providers.py`) that lets you swap your backend depending on whether you want SpeedY APIs or 100% private local execution:
-
-* **OpenRouter:** Default setup for cloud AND fast cloud models (like Nemotron for planning and Cohere for coding in my first test).
-* **Ollama:** Full support for running local models right on your local rig or home server (e.g., Llama 3, Mistral, CodeGemma) without sending code or data to external servers.
-* **Custom Endpoints:** Easily plug in any OpenAI-compatible API backend.
-
----
-
-##  How It Works (The pipe)
-
-ComponentOS uses a decoupled pipeline to make sure synthesized code isn't just valid Python, but actual functional firmware that won't crash your microcontroller or kill your dog:
-
-1. **Architectural Planning Phase (Planner LLM):**
-   * Acts as an embedded hardware architect. 
-   * Scans datasheets and pinouts to output precise technical specifications (for reference of the coder LLM) : I2C/SPI clock speeds, rise-time constraints, register initialization sequences, power-on delays, and burst-read byte offsets.
-
-2. **Firmware Synthesis Phase (Coder LLM):**
-   * Takes the spec from the Planner and converts it into a lean, production-ready MicroPython class.
-   * Generates low-level write/read register helpers, unit conversions (like converting raw LSB to $g$ force or °/s), and automatic hardware bias calibration routines (basically drivers).
-
-3. **Iron Gate Security Audit (AST Validator):**
-   * Parses the generated code using Python's Abstract Syntax Tree to make sure it wont blow your microcontroller up (`ast`).
-   * Enforces strict execution safety by blocking dangerous built-ins (`eval`, `exec`, `open`, `__import__`) and ensuring only approved hardware modules (`machine`, `time`, `math`, `struct`) are imported so nothing blows up.
-
-4. **Universal Deployment (`mpremote`):**
-   * Integrates MicroPython's native CLI tool (`mpremote`) directly into the backend.
-   * Stages the validated driver and flashes it over serial/USB directly onto the board's filesystem (`:driver.py`) across any supported target architecture (ESP32, Raspberry Pi Pico RP2040, STM32, ESP8266).
-
----
-
-## ⚡ Quick Setup
-
-Clone the repository and set up your Python virtual environment:
-
+```text
+Hardware request → Planner → Driver generator → AST safety validator → Optional mpremote deployment
 ```
-git clone https://github.com/IceCheetah9418/componentOS.git && cd componentOS
-python -m venv venv && source venv/bin/activate
+
+1. Describe the peripheral, board, pins, and desired behavior.
+2. The planner produces a hardware implementation specification.
+3. The coder generates a MicroPython driver.
+4. ComponentOS validates the generated source against its safety rules.
+5. If requested, the validated driver is copied to the board.
+
+## Requirements
+
+- Python 3.10 or newer
+- A supported LLM provider: OpenRouter, Ollama, or another OpenAI-compatible API
+- `mpremote` and a connected MicroPython board for flashing
+- A board such as ESP32, RP2040/Pico, or another compatible MicroPython target
+
+## Installation
+
+```bash
+git clone https://github.com/IceCheetah9418/componentOS.git
+cd componentOS
+python -m venv .venv
+
+# macOS/Linux
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
-Drop a .env file in the root directory. You can configure it for OpenRouter (cloud) or Ollama (local):
 
-# Example for OpenRouter Cloud Provider
+Copy the example configuration and edit it:
+
+```bash
+cp .env.example .env
 ```
+
+Never commit `.env` or API keys. For local development, Ollama can keep prompts and generated code on your own machine.
+
+### OpenRouter
+
+```dotenv
 LLM_PROVIDER=openrouter
 LLM_API_KEY=your_openrouter_key_here
 LLM_BASE_URL=https://openrouter.ai/api/v1
-LLM_MODEL=cohere/north-mini-code:free
-PLANNER_MODEL=nvidia/nemotron-3-ultra-550b-a55b:free
+LLM_MODEL=your-coder-model
+PLANNER_MODEL=your-planner-model
 ```
-# OR Example for Local Ollama Provider
-```
+
+### Ollama
+
+```dotenv
 LLM_PROVIDER=ollama
 LLM_BASE_URL=http://localhost:11434
 LLM_MODEL=codellama
 PLANNER_MODEL=llama3
 ```
-Fire up the backend server:
 
-```
+## Run the API
+
+```bash
 uvicorn main:app --reload
 ```
-Test It Out (some examples):
 
-(NOTE: You can send a POST request to http://127.0.0.1:8000/synthesize using curl or any API client.) 
+Open the interactive API documentation at <http://127.0.0.1:8000/docs>.
 
-Example 1: MPU6050 Accelerometer on ESP32
-```
-curl -X 'POST' 'http://127.0.0.1:8000/synthesize' \
+## Example request
+
+This generates a driver for an MPU6050 connected to an ESP32. Set `flash` to `false` while developing or when you only want to inspect the result.
+
+```bash
+curl -X POST http://127.0.0.1:8000/synthesize \
   -H 'Content-Type: application/json' \
   -d '{
     "peripheral": "MPU6050 6-axis accelerometer and gyroscope",
     "pinout": "SDA on pin 21, SCL on pin 22",
     "target": "esp32",
-    "flash": true,
+    "flash": false,
     "port": "/dev/ttyUSB0"
   }'
 ```
-Example 2: DHT22 Sensor on PI Pico
+
+For a Pico, use a port such as `/dev/ttyACM0` on Linux/macOS or `COM3` on Windows.
+
+## Safety and responsible use
+
+Generated code is not automatically safe simply because it passes validation. Review every driver, verify pin assignments and voltage levels, and test with current-limited power where possible. Do not use ComponentOS for medical, life-support, safety-critical, or hazardous-control systems without independent engineering review.
+
+The validator is a defense-in-depth feature, not a sandbox. See [SECURITY.md](SECURITY.md) for reporting vulnerabilities and [support/TROUBLESHOOTING.md](support/TROUBLESHOOTING.md) for common problems.
+
+## Repository layout
+
+```text
+main.py                 FastAPI service and synthesis entry point
+core/                   Planning, validation, and orchestration code
+llm/                    Model/provider integrations
+node/                   Device/node-side code
+tools/                  Development and deployment utilities
+support/                User-facing troubleshooting documentation
+.github/                Issue forms, pull request guidance, and workflows
 ```
-curl -X 'POST' 'http://127.0.0.1:8000/synthesize' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "peripheral": "DHT22 temperature and humidity sensor",
-    "pinout": "Data on GPIO 15",
-    "target": "rp2040",
-    "flash": true,
-    "port": "/dev/ttyACM0"
-  }'
-```
- Note
-Note: This is a solo project built and maintained by one person! New features, UI dashboards, and updates are being actively cooked up, but they might take a little while. Appreciate the free code untill then bruv!
+
+## Troubleshooting and support
+
+Start with the [troubleshooting guide](support/TROUBLESHOOTING.md). When opening an issue, include:
+
+- board and MicroPython version;
+- peripheral model and wiring/pinout;
+- operating system and Python version;
+- provider/model configuration (never include API keys);
+- the complete traceback or API response;
+- a minimal request that reproduces the problem.
+
+Use [GitHub Discussions](https://github.com/IceCheetah9418/componentOS/discussions) for questions and ideas, and [Issues](https://github.com/IceCheetah9418/componentOS/issues) for reproducible bugs and actionable feature requests.
+
+## Contributing
+
+Pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md), follow the [Code of Conduct](CODE_OF_CONDUCT.md), and use the provided issue and pull request templates.
+
+## License
+
+ComponentOS is released under the [MIT License](LICENSE).
+
+## Disclaimer
+
+ComponentOS is provided as-is. Model output can be incorrect, incomplete, or unsafe. You are responsible for validating generated code, hardware connections, credentials, and deployments.

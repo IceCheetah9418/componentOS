@@ -111,9 +111,9 @@ Safety and Responsible Use
 Generated code requires human verification. Review every synthesized driver, double-check pin assignments and operating voltages, and test using current-limited power supplies where possible. ComponentOS must not be used for medical, life-support, mission-critical, or hazardous automation systems without rigorous independent engineering validation.
 
 The safety validator provides defense-in-depth, not an absolute sandbox. Review SECURITY.md for reporting guidelines and support/TROUBLESHOOTING.md for common hardware issues.
+
+Repository Layout:
 ```
-Repository Layout
-Plaintext
 main.py                 FastAPI service, rate limiting, and synthesis entry point
 core/                   Planning, AST security validation, and mpremote deployment code
 llm/                    Pluggable model provider integrations

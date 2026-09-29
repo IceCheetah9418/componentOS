@@ -122,7 +122,8 @@ tools/                  Development and hardware utility scripts
 support/                User-facing troubleshooting guides and documentation
 .github/                Issue templates, pull request checklists, and workflows
 ```
-Troubleshooting and Support
+### Troubleshooting and Support
+
 Check the troubleshooting guide first. When opening an issue or discussion, please include:
 
 Your target board and MicroPython firmware version

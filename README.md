@@ -65,7 +65,8 @@ cp .env.example .env
 ```
 Security Note: Never commit your .env file or API secrets to version control.
 
-Configuration Examples
+## Configuration Examples
+
 OpenRouter
 ```
 LLM_PROVIDER=openrouter

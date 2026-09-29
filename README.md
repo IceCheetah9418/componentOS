@@ -126,17 +126,17 @@ support/                User-facing troubleshooting guides and documentation
 
 Check the troubleshooting guide first. When opening an issue or discussion, please include:
 
-Your target board and MicroPython firmware version
+1. Your target board and MicroPython firmware version
 
-The peripheral model and exact wiring/pinout configuration
+2. The peripheral model and exact wiring/pinout configuration
 
-Your host operating system and Python version
+3. Your host operating system and Python version
 
-Active LLM provider settings (never include raw API keys)
+4. Active LLM provider settings (never include raw API keys)
 
-Full error tracebacks or API JSON responses
+5. Full error tracebacks or API JSON responses
 
-A minimal reproducible request payload
+6. A minimal reproducible request payload
 
 Use GitHub Discussions for architecture questions and Issues for confirmed bugs and feature requests.
 

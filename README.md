@@ -54,7 +54,7 @@ source .venv/bin/activate
 ```
 .venv\Scripts\Activate.ps1
 ```
-Then:
+Then
 ```
 python -m pip install --upgrade pip
 pip install -r requirements.txt
